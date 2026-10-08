@@ -1,0 +1,36 @@
+name: stegshare
+description: Local-first steganography for images (LSB + authenticated encryption).
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  # Vetted crypto: AEAD, KDF, X25519, Ed25519 (never implement primitives ourselves)
+  cryptography: ^2.7.0
+  # dart.dev SHA-256 (synchronous, isolate friendly)
+  crypto: ^3.0.3
+  flutter_secure_storage: ^9.2.2
+  shared_preferences: ^2.2.3   # UI preferences and PUBLIC contacts only, never secrets
+  image: ^4.2.0
+  archive: ^3.6.1
+  file_picker: ^8.0.6
+  desktop_drop: ^0.4.4
+  path_provider: ^2.1.3
+  path: ^1.9.0
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^5.1.1       # Android/iOS QR scanning; Windows scanning is TODO
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
