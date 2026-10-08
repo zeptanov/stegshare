@@ -100,6 +100,10 @@ class AdaptiveTextField extends StatelessWidget {
         maxLines: maxLines,
         onChanged: onChanged,
         padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(14),
+        ),
       );
     }
     return TextField(

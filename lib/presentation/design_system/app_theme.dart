@@ -15,10 +15,15 @@ class AppTheme {
           accent: const Color(0xFF0A84FF),
           background: dark ? const Color(0xFF000000) : const Color(0xFFF2F2F7),
           surface: dark ? const Color(0xFF1C1C1E) : Colors.white,
-          radius: 10,
+          radius: 16,
           font: '.SF Pro Text',
         ).copyWith(
-          cupertinoOverrideTheme: CupertinoThemeData(brightness: b, primaryColor: const Color(0xFF0A84FF)),
+          cupertinoOverrideTheme: CupertinoThemeData(
+            brightness: b,
+            primaryColor: const Color(0xFF0A84FF),
+            barBackgroundColor: (dark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7))
+                .withValues(alpha: 0.82),
+          ),
         );
       case DesignLanguage.android:
         final scheme = ColorScheme.fromSeed(seedColor: const Color(0xFF4F6F52), brightness: b);
@@ -88,7 +93,11 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(radius)),
+        border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        errorBorder: InputBorder.none,
+        focusedErrorBorder: InputBorder.none,
         isDense: true,
       ),
       dividerTheme: DividerThemeData(color: scheme.outline.withValues(alpha: 0.5)),
