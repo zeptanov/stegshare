@@ -70,6 +70,12 @@ class AppTheme {
     final fieldSurface = ios
         ? (dark ? const Color(0xFF2C2C2E) : const Color(0xFFF1F1F6))
         : surface;
+    final inputBorder = ios
+        ? OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide.none,
+          )
+        : InputBorder.none;
     final scheme = ColorScheme(
       brightness: b,
       primary: accent,
@@ -109,11 +115,11 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: fieldSurface,
-        border: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        errorBorder: InputBorder.none,
-        focusedErrorBorder: InputBorder.none,
+        border: inputBorder,
+        enabledBorder: inputBorder,
+        focusedBorder: inputBorder,
+        errorBorder: inputBorder,
+        focusedErrorBorder: inputBorder,
         isDense: true,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

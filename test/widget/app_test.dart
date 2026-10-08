@@ -64,6 +64,20 @@ void main() {
     );
     expect(input.decoration, isA<BoxDecoration>());
     expect((input.decoration as BoxDecoration).border, isNull);
+    expect(
+      (input.decoration as BoxDecoration).borderRadius,
+      BorderRadius.circular(20),
+    );
+
+    final materialInputBorder = AppTheme.build(
+      DesignLanguage.ios,
+      Brightness.light,
+    ).inputDecorationTheme.border;
+    expect(materialInputBorder, isA<OutlineInputBorder>());
+    expect(
+      (materialInputBorder as OutlineInputBorder).borderRadius,
+      BorderRadius.circular(20),
+    );
 
     final toggle = tester.widget<CupertinoSwitch>(find.byType(CupertinoSwitch));
     expect(toggle.trackOutlineColor?.resolve({}), Colors.transparent);
