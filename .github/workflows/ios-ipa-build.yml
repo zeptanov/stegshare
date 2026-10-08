@@ -25,7 +25,7 @@ jobs:
         run: |
           VERSION="$(awk '$1 == "version:" { print $2; exit }' pubspec.yaml)"
           if [[ -z "$VERSION" ]]; then
-            echo "Could not read version from app/pubspec.yaml" >&2
+            echo "Could not read version from pubspec.yaml" >&2
             exit 1
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
@@ -52,7 +52,7 @@ jobs:
         env:
           APP_VERSION: ${{ steps.app-version.outputs.version }}
         run: |
-          IPA_NAME="CashDumpster-${APP_VERSION}.ipa"
+          IPA_NAME="StegSgare-${APP_VERSION}.ipa"
           mkdir -p build/ipa/Payload
           ditto build/ios/Build/Products/Release-iphoneos/Runner.app build/ipa/Payload/Runner.app
           (cd build/ipa && zip -qr -9 "$IPA_NAME" Payload)
@@ -60,6 +60,6 @@ jobs:
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: CashDumpster-${{ steps.app-version.outputs.version }}
-          path: build/ipa/CashDumpster-${{ steps.app-version.outputs.version }}.ipa
+          name: StegSgare-${{ steps.app-version.outputs.version }}
+          path: build/ipa/StegSgare-${{ steps.app-version.outputs.version }}.ipa
           if-no-files-found: error

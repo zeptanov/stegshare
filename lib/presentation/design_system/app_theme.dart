@@ -17,17 +17,23 @@ class AppTheme {
           surface: dark ? const Color(0xFF1C1C1E) : Colors.white,
           radius: 16,
           font: '.SF Pro Text',
+          ios: true,
         ).copyWith(
           cupertinoOverrideTheme: CupertinoThemeData(
             brightness: b,
             primaryColor: const Color(0xFF0A84FF),
-            barBackgroundColor: (dark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7))
-                .withValues(alpha: 0.82),
+            scaffoldBackgroundColor:
+                dark ? const Color(0xFF000000) : const Color(0xFFF2F2F7),
+            barBackgroundColor:
+                (dark ? const Color(0xFF1C1C1E) : const Color(0xFFF2F2F7))
+                    .withValues(alpha: 0.82),
           ),
         );
       case DesignLanguage.android:
-        final scheme = ColorScheme.fromSeed(seedColor: const Color(0xFF4F6F52), brightness: b);
-        return ThemeData(useMaterial3: true, colorScheme: scheme, brightness: b);
+        final scheme = ColorScheme.fromSeed(
+            seedColor: const Color(0xFF4F6F52), brightness: b);
+        return ThemeData(
+            useMaterial3: true, colorScheme: scheme, brightness: b);
       case DesignLanguage.windows:
         return _base(
           b,
@@ -57,9 +63,13 @@ class AppTheme {
     required Color surface,
     required double radius,
     required String? font,
+    bool ios = false,
   }) {
     final dark = b == Brightness.dark;
     final onBg = dark ? const Color(0xFFEDEDED) : const Color(0xFF1B1B1B);
+    final fieldSurface = ios
+        ? (dark ? const Color(0xFF2C2C2E) : const Color(0xFFF1F1F6))
+        : surface;
     final scheme = ColorScheme(
       brightness: b,
       primary: accent,
@@ -70,10 +80,13 @@ class AppTheme {
       onError: Colors.white,
       surface: surface,
       onSurface: onBg,
-      surfaceContainerHighest: dark ? const Color(0xFF2C2C30) : const Color(0xFFECEAE4),
+      surfaceContainerHighest: ios
+          ? fieldSurface
+          : (dark ? const Color(0xFF2C2C30) : const Color(0xFFECEAE4)),
       outline: dark ? const Color(0xFF4A4A50) : const Color(0xFFCFCCC4),
     );
-    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius));
+    final shape =
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius));
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
@@ -87,20 +100,26 @@ class AppTheme {
         scrolledUnderElevation: 0,
         centerTitle: false,
       ),
-      cardTheme: CardThemeData(color: surface, elevation: 0, shape: shape, margin: EdgeInsets.zero),
-      filledButtonTheme: FilledButtonThemeData(style: FilledButton.styleFrom(shape: shape)),
-      outlinedButtonTheme: OutlinedButtonThemeData(style: OutlinedButton.styleFrom(shape: shape)),
+      cardTheme: CardThemeData(
+          color: surface, elevation: 0, shape: shape, margin: EdgeInsets.zero),
+      filledButtonTheme:
+          FilledButtonThemeData(style: FilledButton.styleFrom(shape: shape)),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(shape: shape)),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surface,
+        fillColor: fieldSurface,
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
         focusedBorder: InputBorder.none,
         errorBorder: InputBorder.none,
         focusedErrorBorder: InputBorder.none,
         isDense: true,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
-      dividerTheme: DividerThemeData(color: scheme.outline.withValues(alpha: 0.5)),
+      dividerTheme:
+          DividerThemeData(color: scheme.outline.withValues(alpha: 0.5)),
     );
   }
 }

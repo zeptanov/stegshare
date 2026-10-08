@@ -30,12 +30,7 @@ class _HomeShellState extends State<HomeShell> {
     (Icons.qr_code_2, 'QR'),
     (Icons.tune, 'Settings'),
   ];
-  static const _iosItems = [
-    (CupertinoIcons.lock, 'Hide'),
-    (CupertinoIcons.lock_open, 'Extract'),
-    (CupertinoIcons.qrcode, 'QR'),
-    (CupertinoIcons.settings, 'Settings'),
-  ];
+  static const _iosItems = _items;
 
   @override
   Widget build(BuildContext context) {

@@ -9,7 +9,11 @@ class AdaptivePage extends StatelessWidget {
   final String title;
   final Widget body;
   final List<Widget> actions;
-  const AdaptivePage({super.key, required this.title, required this.body, this.actions = const []});
+  const AdaptivePage(
+      {super.key,
+      required this.title,
+      required this.body,
+      this.actions = const []});
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +21,18 @@ class AdaptivePage extends StatelessWidget {
       return Scaffold(
         appBar: CupertinoNavigationBar(
           middle: Text(title),
-          trailing: actions.isEmpty ? null : Row(mainAxisSize: MainAxisSize.min, children: actions),
+          trailing: actions.isEmpty
+              ? null
+              : Row(mainAxisSize: MainAxisSize.min, children: actions),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           border: null,
         ),
         body: SafeArea(child: body),
       );
     }
-    return Scaffold(appBar: AppBar(title: Text(title), actions: actions), body: SafeArea(child: body));
+    return Scaffold(
+        appBar: AppBar(title: Text(title), actions: actions),
+        body: SafeArea(child: body));
   }
 }
 
@@ -32,7 +40,8 @@ class AdaptivePrimaryButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
   final IconData? icon;
-  const AdaptivePrimaryButton({super.key, required this.label, this.onPressed, this.icon});
+  const AdaptivePrimaryButton(
+      {super.key, required this.label, this.onPressed, this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +50,10 @@ class AdaptivePrimaryButton extends StatelessWidget {
       Text(label),
     ]);
     if (_isIos(context)) {
-      return CupertinoButton.filled(onPressed: onPressed, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), child: child);
+      return CupertinoButton.filled(
+          onPressed: onPressed,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: child);
     }
     return FilledButton(onPressed: onPressed, child: child);
   }
@@ -51,7 +63,8 @@ class AdaptiveSecondaryButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
   final IconData? icon;
-  const AdaptiveSecondaryButton({super.key, required this.label, this.onPressed, this.icon});
+  const AdaptiveSecondaryButton(
+      {super.key, required this.label, this.onPressed, this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +72,9 @@ class AdaptiveSecondaryButton extends StatelessWidget {
       if (icon != null) ...[Icon(icon, size: 18), const SizedBox(width: 8)],
       Text(label),
     ]);
-    if (_isIos(context)) return CupertinoButton(onPressed: onPressed, child: child);
+    if (_isIos(context)) {
+      return CupertinoButton(onPressed: onPressed, child: child);
+    }
     return OutlinedButton(onPressed: onPressed, child: child);
   }
 }
@@ -70,9 +85,20 @@ class AdaptiveSwitch extends StatelessWidget {
   const AdaptiveSwitch({super.key, required this.value, this.onChanged});
 
   @override
-  Widget build(BuildContext context) => _isIos(context)
-      ? CupertinoSwitch(value: value, onChanged: onChanged)
-      : Switch(value: value, onChanged: onChanged);
+  Widget build(BuildContext context) {
+    if (!_isIos(context)) {
+      return Switch(value: value, onChanged: onChanged);
+    }
+    final colors = Theme.of(context).colorScheme;
+    return CupertinoSwitch(
+      value: value,
+      onChanged: onChanged,
+      activeTrackColor: colors.primary,
+      inactiveTrackColor: colors.onSurface.withValues(alpha: 0.16),
+      thumbColor: colors.surface,
+      trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+    );
+  }
 }
 
 class AdaptiveTextField extends StatelessWidget {
@@ -99,10 +125,20 @@ class AdaptiveTextField extends StatelessWidget {
         obscureText: obscure,
         maxLines: maxLines,
         onChanged: onChanged,
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        cursorColor: Theme.of(context).colorScheme.primary,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
+          fontSize: 16,
+        ),
+        placeholderStyle: TextStyle(
+          color:
+              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.42),
+          fontSize: 16,
+        ),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
         ),
       );
     }
@@ -116,14 +152,18 @@ class AdaptiveTextField extends StatelessWidget {
   }
 }
 
-Future<void> showAdaptiveMessage(BuildContext context, String title, String message) {
+Future<void> showAdaptiveMessage(
+    BuildContext context, String title, String message) {
   if (_isIos(context)) {
     return showCupertinoDialog(
       context: context,
       builder: (c) => CupertinoAlertDialog(
         title: Text(title),
         content: Text(message),
-        actions: [CupertinoDialogAction(onPressed: () => Navigator.pop(c), child: const Text('OK'))],
+        actions: [
+          CupertinoDialogAction(
+              onPressed: () => Navigator.pop(c), child: const Text('OK'))
+        ],
       ),
     );
   }
@@ -132,12 +172,15 @@ Future<void> showAdaptiveMessage(BuildContext context, String title, String mess
     builder: (c) => AlertDialog(
       title: Text(title),
       content: Text(message),
-      actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('OK'))],
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(c), child: const Text('OK'))
+      ],
     ),
   );
 }
 
-Future<bool> showAdaptiveConfirm(BuildContext context, String title, String message,
+Future<bool> showAdaptiveConfirm(
+    BuildContext context, String title, String message,
     {String confirmLabel = 'Continue'}) async {
   final r = _isIos(context)
       ? await showCupertinoDialog<bool>(
@@ -146,9 +189,13 @@ Future<bool> showAdaptiveConfirm(BuildContext context, String title, String mess
             title: Text(title),
             content: Text(message),
             actions: [
-              CupertinoDialogAction(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
               CupertinoDialogAction(
-                  isDestructiveAction: true, onPressed: () => Navigator.pop(c, true), child: Text(confirmLabel)),
+                  onPressed: () => Navigator.pop(c, false),
+                  child: const Text('Cancel')),
+              CupertinoDialogAction(
+                  isDestructiveAction: true,
+                  onPressed: () => Navigator.pop(c, true),
+                  child: Text(confirmLabel)),
             ],
           ),
         )
@@ -158,8 +205,12 @@ Future<bool> showAdaptiveConfirm(BuildContext context, String title, String mess
             title: Text(title),
             content: Text(message),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
-              FilledButton(onPressed: () => Navigator.pop(c, true), child: Text(confirmLabel)),
+              TextButton(
+                  onPressed: () => Navigator.pop(c, false),
+                  child: const Text('Cancel')),
+              FilledButton(
+                  onPressed: () => Navigator.pop(c, true),
+                  child: Text(confirmLabel)),
             ],
           ),
         );
