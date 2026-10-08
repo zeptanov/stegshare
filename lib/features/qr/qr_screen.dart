@@ -58,18 +58,28 @@ class _QrScreenState extends ConsumerState<QrScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Message password'),
-        content: TextField(controller: pwCtl, obscureText: true, decoration: const InputDecoration(hintText: 'Password (leave empty if none)')),
+        content: TextField(
+            controller: pwCtl,
+            obscureText: true,
+            decoration: const InputDecoration(
+                hintText: 'Password (leave empty if none)')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, pwCtl.text), child: const Text('Open')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          FilledButton(
+              onPressed: () => Navigator.pop(ctx, pwCtl.text),
+              child: const Text('Open')),
         ],
       ),
     );
     if (pw == null) return;
     try {
       final id = await ref.read(identityProvider.notifier).loadSecret();
-      final d = await ContainerCodec().open(bytes, password: pw.isEmpty ? null : pw, recipientSeed: id?.x25519Seed);
-      final text = d.items.map((i) => i.asText ?? '[${i.entry.name}, ${i.entry.size} bytes]').join('\n\n');
+      final d = await ContainerCodec().open(bytes,
+          password: pw.isEmpty ? null : pw, recipientSeed: id?.x25519Seed);
+      final text = d.items
+          .map((i) => i.asText ?? '[${i.entry.name}, ${i.entry.size} bytes]')
+          .join('\n\n');
       if (!mounted) return;
       await showAdaptiveMessage(context, 'Decoded message', text);
     } on StegShareException catch (e) {
@@ -86,7 +96,13 @@ class _QrScreenState extends ConsumerState<QrScreen> {
           ? const EncryptionSpec.none()
           : EncryptionSpec.password(_msgPw.text, kdf: KdfParams.fallbackPbkdf2);
       final bytes = await ContainerCodec().build(
-        items: [PayloadInput(type: PayloadType.text, name: 'message.txt', mime: 'text/plain', data: Uint8List.fromList(utf8.encode(text)))],
+        items: [
+          PayloadInput(
+              type: PayloadType.text,
+              name: 'message.txt',
+              mime: 'text/plain',
+              data: Uint8List.fromList(utf8.encode(text)))
+        ],
         spec: spec,
       );
       setState(() {
@@ -94,14 +110,16 @@ class _QrScreenState extends ConsumerState<QrScreen> {
         _status = null;
       });
     } on FormatException {
-      setState(() => _status = 'Message too large for a QR code (limit ~2 KB after encryption).');
+      setState(() => _status =
+          'Message too large for a QR code (limit ~2 KB after encryption).');
     } on StegShareException catch (e) {
       setState(() => _status = e.message);
     }
   }
 
   Future<void> _scan() async {
-    final value = await Navigator.push<String>(context, MaterialPageRoute(builder: (_) => const _ScanPage()));
+    final value = await Navigator.push<String>(
+        context, MaterialPageRoute(builder: (_) => const _ScanPage()));
     if (value != null) await _handleUri(value);
   }
 
@@ -118,19 +136,24 @@ class _QrScreenState extends ConsumerState<QrScreen> {
             title: 'My public key',
             child: Panel(
               child: identity == null
-                  ? const Text('Generate an identity in Settings to share your public key.')
+                  ? const Text(
+                      'Generate an identity in Settings to share your public key.')
                   : Column(children: [
                       Center(
                         child: Container(
                           color: Colors.white,
                           padding: const EdgeInsets.all(8),
-                          child: QrImageView(data: StegShareUri.encodePublicIdentity(identity), size: 200),
+                          child: QrImageView(
+                              data: StegShareUri.encodePublicIdentity(identity),
+                              size: 200),
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text('${identity.name} · ${identity.fingerprint}', style: const TextStyle(fontFamily: 'monospace')),
+                      Text('${identity.name} · ${identity.fingerprint}',
+                          style: const TextStyle(fontFamily: 'monospace')),
                       TextButton.icon(
-                        onPressed: () => Clipboard.setData(ClipboardData(text: StegShareUri.encodePublicIdentity(identity))),
+                        onPressed: () => Clipboard.setData(ClipboardData(
+                            text: StegShareUri.encodePublicIdentity(identity))),
                         icon: const Icon(Icons.copy, size: 16),
                         label: const Text('Copy as text'),
                       ),
@@ -139,42 +162,68 @@ class _QrScreenState extends ConsumerState<QrScreen> {
           ),
           Section(
             title: 'Import / open',
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              if (_canScan)
-                AdaptiveSecondaryButton(label: 'Scan QR code', icon: Icons.qr_code_scanner, onPressed: _scan)
-              else
-                Text('Camera scanning on Windows is not implemented yet (TODO). Paste the STEGSHARE:// text below.',
-                    style: t.textTheme.bodySmall),
-              const SizedBox(height: 8),
-              AdaptiveTextField(controller: _input, placeholder: 'STEGSHARE://…', maxLines: 3),
-              const SizedBox(height: 8),
-              AdaptivePrimaryButton(label: 'Process', onPressed: () => _handleUri(_input.text)),
-            ]),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (_canScan)
+                    AdaptiveSecondaryButton(
+                        label: 'Scan QR code',
+                        icon: Icons.qr_code_scanner,
+                        onPressed: _scan)
+                  else
+                    Text(
+                        'Camera scanning on Windows is not implemented yet (TODO). Paste the STEGSHARE:// text below.',
+                        style: t.textTheme.bodySmall),
+                  const SizedBox(height: 8),
+                  AdaptiveTextField(
+                      controller: _input,
+                      placeholder: 'STEGSHARE://…',
+                      maxLines: 3),
+                  const SizedBox(height: 8),
+                  AdaptivePrimaryButton(
+                      label: 'Process',
+                      onPressed: () => _handleUri(_input.text)),
+                ]),
           ),
           Section(
             title: 'Small encrypted message as QR',
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              AdaptiveTextField(controller: _msg, placeholder: 'Short message', maxLines: 3),
-              const SizedBox(height: 8),
-              AdaptiveTextField(controller: _msgPw, placeholder: 'Password (optional)', obscure: true),
-              const SizedBox(height: 8),
-              AdaptiveSecondaryButton(label: 'Generate QR', icon: Icons.qr_code_2, onPressed: _generateMessage),
-              if (_generatedMessageUri != null) ...[
-                const SizedBox(height: 12),
-                Center(
-                  child: Container(
-                    color: Colors.white,
-                    padding: const EdgeInsets.all(8),
-                    child: QrImageView(data: _generatedMessageUri!, size: 240, errorCorrectionLevel: QrErrorCorrectLevel.L),
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: () => Clipboard.setData(ClipboardData(text: _generatedMessageUri!)),
-                  icon: const Icon(Icons.copy, size: 16),
-                  label: const Text('Copy URI'),
-                ),
-              ],
-            ]),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AdaptiveTextField(
+                      controller: _msg,
+                      placeholder: 'Short message',
+                      maxLines: 3),
+                  const SizedBox(height: 8),
+                  AdaptiveTextField(
+                      controller: _msgPw,
+                      placeholder: 'Password (optional)',
+                      obscure: true),
+                  const SizedBox(height: 8),
+                  AdaptiveSecondaryButton(
+                      label: 'Generate QR',
+                      icon: Icons.qr_code_2,
+                      onPressed: _generateMessage),
+                  if (_generatedMessageUri != null) ...[
+                    const SizedBox(height: 12),
+                    Center(
+                      child: Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.all(8),
+                        child: QrImageView(
+                            data: _generatedMessageUri!,
+                            size: 240,
+                            errorCorrectionLevel: QrErrorCorrectLevel.L),
+                      ),
+                    ),
+                    TextButton.icon(
+                      onPressed: () => Clipboard.setData(
+                          ClipboardData(text: _generatedMessageUri!)),
+                      icon: const Icon(Icons.copy, size: 16),
+                      label: const Text('Copy URI'),
+                    ),
+                  ],
+                ]),
           ),
           if (_status != null) WarningNote(_status!),
         ],
@@ -196,6 +245,40 @@ class _ScanPageState extends State<_ScanPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Scan')),
       body: MobileScanner(
+        errorBuilder: (context, error, child) {
+          final message = switch (error.errorCode) {
+            MobileScannerErrorCode.permissionDenied =>
+              'Camera access is disabled. Allow camera access in your device settings, then try again.',
+            MobileScannerErrorCode.unsupported =>
+              'Camera scanning is not supported on this device.',
+            _ => 'Could not start the camera.',
+          };
+          return ColoredBox(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.no_photography_outlined, size: 40),
+                    const SizedBox(height: 12),
+                    Text(message, textAlign: TextAlign.center),
+                    if (error.errorDetails?.message case final details?)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          details,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
         onDetect: (capture) {
           if (_done) return;
           final v = capture.barcodes.firstOrNull?.rawValue;
