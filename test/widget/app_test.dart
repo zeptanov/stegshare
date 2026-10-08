@@ -11,6 +11,28 @@ import 'package:stegshare/presentation/platform_design/adaptive.dart';
 import 'package:stegshare/presentation/platform_design/design_language.dart';
 
 void main() {
+  test('all design themes use rounded, borderless fields and selectors', () {
+    for (final language in DesignLanguage.values) {
+      for (final brightness in Brightness.values) {
+        final theme = AppTheme.build(language, brightness);
+        final fieldBorder = theme.inputDecorationTheme.enabledBorder!;
+        final selectorStyle = theme.segmentedButtonTheme.style!;
+
+        expect(fieldBorder, isA<OutlineInputBorder>(),
+            reason: '$language $brightness');
+        expect(
+          (fieldBorder as OutlineInputBorder).borderRadius,
+          BorderRadius.circular(18),
+          reason: '$language $brightness',
+        );
+        expect(fieldBorder.borderSide.style, BorderStyle.none,
+            reason: '$language $brightness');
+        expect(selectorStyle.side?.resolve({}), BorderSide.none,
+            reason: '$language $brightness');
+      }
+    }
+  });
+
   testWidgets('app boots and switches design language without restart',
       (tester) async {
     SharedPreferences.setMockInitialValues({});
@@ -64,20 +86,6 @@ void main() {
     );
     expect(input.decoration, isA<BoxDecoration>());
     expect((input.decoration as BoxDecoration).border, isNull);
-    expect(
-      (input.decoration as BoxDecoration).borderRadius,
-      BorderRadius.circular(20),
-    );
-
-    final materialInputBorder = AppTheme.build(
-      DesignLanguage.ios,
-      Brightness.light,
-    ).inputDecorationTheme.border;
-    expect(materialInputBorder, isA<OutlineInputBorder>());
-    expect(
-      (materialInputBorder as OutlineInputBorder).borderRadius,
-      BorderRadius.circular(20),
-    );
 
     final toggle = tester.widget<CupertinoSwitch>(find.byType(CupertinoSwitch));
     expect(toggle.trackOutlineColor?.resolve({}), Colors.transparent);

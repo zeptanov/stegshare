@@ -33,7 +33,15 @@ class AppTheme {
         final scheme = ColorScheme.fromSeed(
             seedColor: const Color(0xFF4F6F52), brightness: b);
         return ThemeData(
-            useMaterial3: true, colorScheme: scheme, brightness: b);
+          useMaterial3: true,
+          colorScheme: scheme,
+          brightness: b,
+          inputDecorationTheme: _inputDecorationTheme(
+            fillColor: scheme.surfaceContainerHighest,
+            radius: 18,
+          ),
+          segmentedButtonTheme: _segmentedButtonTheme(scheme, radius: 16),
+        );
       case DesignLanguage.windows:
         return _base(
           b,
@@ -70,12 +78,6 @@ class AppTheme {
     final fieldSurface = ios
         ? (dark ? const Color(0xFF2C2C2E) : const Color(0xFFF1F1F6))
         : surface;
-    final inputBorder = ios
-        ? OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide: BorderSide.none,
-          )
-        : InputBorder.none;
     final scheme = ColorScheme(
       brightness: b,
       primary: accent,
@@ -112,20 +114,56 @@ class AppTheme {
           FilledButtonThemeData(style: FilledButton.styleFrom(shape: shape)),
       outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(shape: shape)),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: fieldSurface,
-        border: inputBorder,
-        enabledBorder: inputBorder,
-        focusedBorder: inputBorder,
-        errorBorder: inputBorder,
-        focusedErrorBorder: inputBorder,
-        isDense: true,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      ),
+      inputDecorationTheme:
+          _inputDecorationTheme(fillColor: fieldSurface, radius: 18),
+      segmentedButtonTheme: _segmentedButtonTheme(scheme, radius: 16),
       dividerTheme:
           DividerThemeData(color: scheme.outline.withValues(alpha: 0.5)),
     );
   }
+
+  static OutlineInputBorder _fieldBorder(double radius) => OutlineInputBorder(
+        borderRadius: BorderRadius.circular(radius),
+        borderSide: BorderSide.none,
+      );
+
+  static InputDecorationTheme _inputDecorationTheme({
+    required Color fillColor,
+    required double radius,
+  }) =>
+      InputDecorationTheme(
+        filled: true,
+        fillColor: fillColor,
+        border: _fieldBorder(radius),
+        enabledBorder: _fieldBorder(radius),
+        focusedBorder: _fieldBorder(radius),
+        errorBorder: _fieldBorder(radius),
+        focusedErrorBorder: _fieldBorder(radius),
+        isDense: true,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      );
+
+  static SegmentedButtonThemeData _segmentedButtonTheme(
+    ColorScheme scheme, {
+    required double radius,
+  }) =>
+      SegmentedButtonThemeData(
+        style: ButtonStyle(
+          side: const WidgetStatePropertyAll(BorderSide.none),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(radius),
+            ),
+          ),
+          backgroundColor: WidgetStateProperty.resolveWith((states) =>
+              states.contains(WidgetState.selected)
+                  ? scheme.primary.withValues(alpha: 0.14)
+                  : scheme.surfaceContainerHighest),
+          foregroundColor: WidgetStateProperty.resolveWith((states) =>
+              states.contains(WidgetState.selected)
+                  ? scheme.primary
+                  : scheme.onSurface),
+        ),
+      );
 }
