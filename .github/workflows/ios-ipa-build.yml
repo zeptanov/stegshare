@@ -1,0 +1,69 @@
+name: iOS IPA Build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-ios:
+    name: Build iOS IPA
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: app
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Read app version
+        id: app-version
+        run: |
+          VERSION="$(awk '$1 == "version:" { print $2; exit }' pubspec.yaml)"
+          if [[ -z "$VERSION" ]]; then
+            echo "Could not read version from app/pubspec.yaml" >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Prepare iOS project
+        run: flutter build ios --release --no-codesign --config-only
+
+      - name: Build iOS app without signing
+        run: |
+          xcodebuild \
+            -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build/ios \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
+
+      - name: Package IPA
+        env:
+          APP_VERSION: ${{ steps.app-version.outputs.version }}
+        run: |
+          IPA_NAME="CashDumpster-${APP_VERSION}.ipa"
+          mkdir -p build/ipa/Payload
+          ditto build/ios/Build/Products/Release-iphoneos/Runner.app build/ipa/Payload/Runner.app
+          (cd build/ipa && zip -qr -9 "$IPA_NAME" Payload)
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: CashDumpster-${{ steps.app-version.outputs.version }}
+          path: app/build/ipa/CashDumpster-${{ steps.app-version.outputs.version }}.ipa
+          if-no-files-found: error
