@@ -2,6 +2,7 @@ import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stegshare/domain/models.dart';
 
 import '../../core/container/container_codec.dart';
 import '../../core/container/container_format.dart';

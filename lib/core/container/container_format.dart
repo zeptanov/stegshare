@@ -23,7 +23,7 @@ import '../util/byte_io.dart';
 /// body len + body     u32 + n   (ciphertext||tag, or plaintext when unencrypted)
 /// [sig len + sig]     u8 + n    (only if flag bit1)
 /// crc32               u32  over everything above
-# /// ```
+/// ```
 /// AEAD AAD = header bytes (magic .. end of ext). Signature = Ed25519 over
 /// header || body_len || body. Unknown TLV types are ignored for forward compat.
 enum KeyMode {

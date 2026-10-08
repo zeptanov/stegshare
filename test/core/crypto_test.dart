@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:cryptography/cryptography.dart';
+import 'package:cryptography/cryptography.dart' hide KdfAlgorithm;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stegshare/core/crypto/hashing.dart';
 import 'package:stegshare/core/crypto/hybrid_encryption.dart';

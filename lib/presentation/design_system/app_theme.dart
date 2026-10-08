@@ -82,7 +82,7 @@ class AppTheme {
         scrolledUnderElevation: 0,
         centerTitle: false,
       ),
-      cardTheme: CardTheme(color: surface, elevation: 0, shape: shape, margin: EdgeInsets.zero),
+      cardTheme: CardThemeData(color: surface, elevation: 0, shape: shape, margin: EdgeInsets.zero),
       filledButtonTheme: FilledButtonThemeData(style: FilledButton.styleFrom(shape: shape)),
       outlinedButtonTheme: OutlinedButtonThemeData(style: OutlinedButton.styleFrom(shape: shape)),
       inputDecorationTheme: InputDecorationTheme(
@@ -91,7 +91,7 @@ class AppTheme {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(radius)),
         isDense: true,
       ),
-      dividerTheme: DividerThemeData(color: scheme.outline.withOpacity(0.5)),
+      dividerTheme: DividerThemeData(color: scheme.outline.withValues(alpha: 0.5)),
     );
   }
 }
