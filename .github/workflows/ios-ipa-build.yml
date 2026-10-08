@@ -10,10 +10,6 @@ jobs:
   build-ios:
     name: Build iOS IPA
     runs-on: macos-latest
-    defaults:
-      run:
-        working-directory: app
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
