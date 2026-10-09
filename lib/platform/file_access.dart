@@ -30,7 +30,12 @@ class FileAccess {
         return (await ImagePicker().pickImage(source: ImageSource.gallery))?.path;
       }
     }
-    final r = await FilePicker.platform.pickFiles(type: FileType.image, allowMultiple: false);
+    final r = await FilePicker.platform.pickFiles(
+      // On mobile, the image MIME filter can route to a gallery app instead of Files.
+      type: isMobile ? FileType.any : FileType.image,
+      allowMultiple: false,
+      withData: false,
+    );
     return r?.files.single.path;
   }
 
