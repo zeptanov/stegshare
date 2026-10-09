@@ -1,5 +1,5 @@
 #define MyAppName "StegShare"
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "0.2.0"
 #define MyAppPublisher "StegShare"
 #define MyAppExeName "stegshare.exe"
 
