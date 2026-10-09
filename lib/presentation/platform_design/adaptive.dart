@@ -1,9 +1,42 @@
  import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+ import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 
 import 'design_language.dart';
 
 bool _isIos(BuildContext c) => DesignScope.of(c) == DesignLanguage.ios;
+bool _isLiquidGlass(BuildContext c) =>
+    DesignScope.of(c) == DesignLanguage.liquidGlass;
+
+class _LiquidGlassBackdrop extends StatelessWidget {
+  final Brightness brightness;
+
+  const _LiquidGlassBackdrop({required this.brightness});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = brightness == Brightness.dark
+        ? const [
+            Color(0xFF11182D),
+            Color(0xFF17132C),
+            Color(0xFF0B1B2A),
+          ]
+        : const [
+            Color(0xFFF1F4FF),
+            Color(0xFFE9E8FA),
+            Color(0xFFE4F1FB),
+          ];
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: colors,
+        ),
+      ),
+    );
+  }
+}
 
 class AdaptivePage extends StatelessWidget {
   final String title;
@@ -17,6 +50,21 @@ class AdaptivePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLiquidGlass(context)) {
+      final theme = Theme.of(context);
+      return GlassScaffold(
+        background: _LiquidGlassBackdrop(brightness: theme.brightness),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        appBar: GlassAppBar(
+          title: Text(title),
+          centerTitle: false,
+          actions: actions,
+        ),
+        body: SafeArea(child: body),
+        statusBarStyle: GlassStatusBarStyle.auto,
+        edgeFade: false,
+      );
+    }
     if (_isIos(context)) {
       return Scaffold(
         appBar: CupertinoNavigationBar(
@@ -86,6 +134,14 @@ class AdaptiveSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLiquidGlass(context) && onChanged != null) {
+      return GlassSwitch(
+        value: value,
+        onChanged: onChanged!,
+        activeColor: Theme.of(context).colorScheme.primary,
+        enableHaptics: false,
+      );
+    }
     if (!_isIos(context)) {
       return Switch(value: value, onChanged: onChanged);
     }
@@ -118,6 +174,24 @@ class AdaptiveTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLiquidGlass(context)) {
+      return GlassTextField(
+        controller: controller,
+        placeholder: placeholder,
+        obscureText: obscure,
+        maxLines: maxLines,
+        onChanged: onChanged,
+        useOwnLayer: true,
+        textStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
+          fontSize: 16,
+        ),
+        placeholderStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+          fontSize: 16,
+        ),
+      );
+    }
     if (_isIos(context)) {
       return CupertinoTextField(
         controller: controller,

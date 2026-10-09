@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.stegshare"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = maxOf(flutter.compileSdkVersion, 36)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -36,6 +36,10 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+dependencies {
+    implementation("androidx.appcompat:appcompat:1.7.0")
 }
 
 kotlin {

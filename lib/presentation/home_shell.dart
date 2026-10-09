@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 
 import '../features/extract/extract_screen.dart';
 import '../features/hide/hide_screen.dart';
@@ -38,7 +39,9 @@ class _HomeShellState extends State<HomeShell> {
     final wide = MediaQuery.sizeOf(context).width >= 800;
     final page = IndexedStack(index: _index, children: _pages);
 
-    if (wide && lang != DesignLanguage.ios) {
+    if (wide &&
+        lang != DesignLanguage.ios &&
+        lang != DesignLanguage.liquidGlass) {
       return Scaffold(
         body: Row(children: [
           NavigationRail(
@@ -70,6 +73,24 @@ class _HomeShellState extends State<HomeShell> {
           currentIndex: _index,
           onTap: (i) => setState(() => _index = i),
           items: _iosItems,
+        ),
+      );
+    }
+    if (lang == DesignLanguage.liquidGlass) {
+      return Scaffold(
+        extendBody: true,
+        body: page,
+        bottomNavigationBar: GlassTabBar.bottom(
+          tabs: [
+            for (final item in _items)
+              GlassTab(icon: Icon(item.$1), label: item.$2),
+          ],
+          selectedIndex: _index,
+          onTabSelected: (i) => setState(() => _index = i),
+          adaptiveBrightness: true,
+          selectedIconColor: Theme.of(context).colorScheme.primary,
+          selectedLabelColor: Theme.of(context).colorScheme.primary,
+          glowOpacity: 0.28,
         ),
       );
     }

@@ -62,7 +62,7 @@ class _HideScreenState extends ConsumerState<HideScreen> {
                   onPressed: s.busy
                       ? null
                       : () async {
-                          final p = await FileAccess.pickImagePath();
+                          final p = await FileAccess.pickImagePath(context: context);
                           if (p != null) c.setImagePath(p);
                         },
                   child: const Text('Change'))
@@ -71,7 +71,7 @@ class _HideScreenState extends ConsumerState<HideScreen> {
               ? ImageDropZone(
                   highlighted: _dragging,
                   onPick: () async {
-                    final p = await FileAccess.pickImagePath();
+                    final p = await FileAccess.pickImagePath(context: context);
                     if (p != null) c.setImagePath(p);
                   })
               : Panel(
@@ -126,7 +126,7 @@ class _HideScreenState extends ConsumerState<HideScreen> {
               onPressed: s.busy
                   ? null
                   : () async {
-                      final files = await FileAccess.pickFiles();
+                      final files = await FileAccess.pickFiles(context: context);
                       c.addFilePaths(files.map((f) => f.path));
                     },
               icon: const Icon(Icons.attach_file, size: 18),

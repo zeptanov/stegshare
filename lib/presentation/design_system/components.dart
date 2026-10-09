@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 
 import '../platform_design/design_language.dart';
 
@@ -51,6 +52,13 @@ class Panel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
+    if (DesignScope.of(context) == DesignLanguage.liquidGlass) {
+      return GlassCard(
+        padding: padding,
+        clipBehavior: Clip.antiAlias,
+        child: Material(color: Colors.transparent, child: child),
+      );
+    }
     final radius =
         (t.cardTheme.shape as RoundedRectangleBorder?)?.borderRadius ??
             BorderRadius.circular(8);

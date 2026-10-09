@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'features/settings/settings_controller.dart';
+import 'presentation/app_lock_gate.dart';
 import 'presentation/design_system/app_theme.dart';
 import 'presentation/home_shell.dart';
 import 'presentation/platform_design/design_language.dart';
@@ -22,7 +23,7 @@ class StegShareApp extends ConsumerWidget {
         theme: AppTheme.build(resolved, Brightness.light),
         darkTheme: AppTheme.build(resolved, Brightness.dark),
         themeMode: settings.themeMode,
-        home: const HomeShell(),
+        home: const AppLockGate(child: HomeShell()),
       ),
     );
   }

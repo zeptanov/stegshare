@@ -28,6 +28,10 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>StegShare uses the camera to scan QR codes.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>StegShare uses Face ID to unlock app protection.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>StegShare lets you choose cover images and files to hide or extract.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

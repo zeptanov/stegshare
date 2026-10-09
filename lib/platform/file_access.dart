@@ -2,9 +2,13 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 
 import '../core/container/safe_filename.dart';
+
+enum _PickSource { gallery, files }
 
 class PickedFileInfo {
   final String path;
@@ -18,12 +22,31 @@ class FileAccess {
   static bool get isDesktop => Platform.isWindows || Platform.isLinux || Platform.isMacOS;
   static bool get isMobile => Platform.isAndroid || Platform.isIOS;
 
-  static Future<String?> pickImagePath() async {
+  static Future<String?> pickImagePath({required BuildContext context}) async {
+    if (isMobile) {
+      final source = await _chooseSource(context, includeGallery: true);
+      if (source == null) return null;
+      if (source == _PickSource.gallery) {
+        return (await ImagePicker().pickImage(source: ImageSource.gallery))?.path;
+      }
+    }
     final r = await FilePicker.platform.pickFiles(type: FileType.image, allowMultiple: false);
     return r?.files.single.path;
   }
 
-  static Future<List<PickedFileInfo>> pickFiles() async {
+  static Future<List<PickedFileInfo>> pickFiles({required BuildContext context}) async {
+    if (isMobile) {
+      final source = await _chooseSource(context, includeGallery: true);
+      if (source == null) return const [];
+      if (source == _PickSource.gallery) {
+        final images = await ImagePicker().pickMultiImage();
+        final files = <PickedFileInfo>[];
+        for (final image in images) {
+          files.add(await describe(image.path));
+        }
+        return files;
+      }
+    }
     final r = await FilePicker.platform.pickFiles(allowMultiple: true, withData: false);
     if (r == null) return const [];
     final out = <PickedFileInfo>[];
@@ -33,6 +56,42 @@ class FileAccess {
     }
     return out;
   }
+
+  static Future<String?> pickFilePath({List<String>? extensions}) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: extensions == null ? FileType.any : FileType.custom,
+      allowedExtensions: extensions,
+      allowMultiple: false,
+      withData: false,
+    );
+    return result?.files.single.path;
+  }
+
+  static Future<_PickSource?> _chooseSource(
+    BuildContext context, {
+    required bool includeGallery,
+  }) =>
+      showModalBottomSheet<_PickSource>(
+        context: context,
+        builder: (context) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (includeGallery)
+                ListTile(
+                  leading: const Icon(Icons.photo_library_outlined),
+                  title: const Text('Gallery'),
+                  onTap: () => Navigator.pop(context, _PickSource.gallery),
+                ),
+              ListTile(
+                leading: const Icon(Icons.folder_open_outlined),
+                title: const Text('Files'),
+                onTap: () => Navigator.pop(context, _PickSource.files),
+              ),
+            ],
+          ),
+        ),
+      );
 
   static Future<PickedFileInfo> describe(String path) async =>
       PickedFileInfo(path: path, name: p.basename(path), size: await File(path).length());

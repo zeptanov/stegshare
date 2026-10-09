@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 /// Design language is a pure UI concern, decoupled from the runtime platform.
@@ -7,7 +6,8 @@ enum DesignLanguage {
   ios('iOS'),
   android('Android'),
   windows('Windows'),
-  custom('STEGSHARE');
+  custom('STEGSHARE'),
+  liquidGlass('Liquid Glass');
 
   final String label;
   const DesignLanguage(this.label);
@@ -34,7 +34,8 @@ class DesignScope extends InheritedWidget {
   const DesignScope({super.key, required this.language, required super.child});
 
   static DesignLanguage of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<DesignScope>()?.language ?? DesignLanguage.custom;
+      context.dependOnInheritedWidgetOfExactType<DesignScope>()?.language ??
+      DesignLanguage.custom;
 
   @override
   bool updateShouldNotify(DesignScope old) => old.language != language;

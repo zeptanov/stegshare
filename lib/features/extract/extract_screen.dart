@@ -29,14 +29,14 @@ class ExtractScreen extends ConsumerWidget {
           trailing: s.imageBytes != null
               ? TextButton(
                   onPressed: () async {
-                    final p = await FileAccess.pickImagePath();
+                    final p = await FileAccess.pickImagePath(context: context);
                     if (p != null) c.setImagePath(p);
                   },
                   child: const Text('Change'))
               : null,
           child: s.imageBytes == null
               ? ImageDropZone(onPick: () async {
-                  final p = await FileAccess.pickImagePath();
+                  final p = await FileAccess.pickImagePath(context: context);
                   if (p != null) c.setImagePath(p);
                 })
               : Panel(

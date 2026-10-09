@@ -51,6 +51,15 @@ class AppTheme {
           radius: 4,
           font: 'Segoe UI',
         );
+      case DesignLanguage.liquidGlass:
+        return _base(
+          b,
+          accent: const Color(0xFF657BFF),
+          background: dark ? const Color(0xFF0B1020) : const Color(0xFFE9EEFA),
+          surface: dark ? const Color(0xFF20283A) : const Color(0xFFF8FAFF),
+          radius: 24,
+          font: null,
+        );
       case DesignLanguage.custom:
       case DesignLanguage.automatic:
         return _base(
