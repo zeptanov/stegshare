@@ -57,6 +57,13 @@ add_subdirectory("runner")
 # them to the application.
 include(flutter/generated_plugins.cmake)
 
+# MSVC 14.51 turns the deprecated <experimental/coroutine> header used by
+# local_auth_windows into an error. Silence that deprecation for this plugin.
+if(TARGET local_auth_windows_plugin)
+  target_compile_definitions(local_auth_windows_plugin PRIVATE
+    "_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS")
+endif()
+
 
 # === Installation ===
 # Support files are copied into place next to the executable, so that it can
